@@ -11,6 +11,8 @@ class UsersController < ApplicationController
       else
         user.read_redis
       end
+
+      user.books.to_a # eager load
     end
 
     render json: @users
