@@ -7,3 +7,12 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+require 'faker'
+
+10.times do
+  user = User.create(name: Faker::Name.name, age: rand(30))
+
+  rand(5).times do
+    user.books.create(name: Faker::Book.title)
+  end
+end
