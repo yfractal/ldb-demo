@@ -5,6 +5,14 @@ class UsersController < ApplicationController
   def index
     @users = User.all
 
+    @users.each do |user|
+      if rand >= 0.1
+        user.write_redis
+      else
+        user.read_redis
+      end
+    end
+
     render json: @users
   end
 
