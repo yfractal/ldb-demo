@@ -33,7 +33,9 @@ class LDBMiddleware
 
         frames_count.times do |i|
           buffer = @buffer[i]
-          frame << [i, buffer.f_method_name, buffer.f_generation]
+          frame << [i, buffer.f_method_name, buffer.f_full_label, buffer.f_generation]
+          # frame << [i, buffer.f_method_name, buffer.f_generation]
+          # frame << [i, buffer.f_method_name, buffer.f_full_label, buffer.f_generation]
         end
 
         @traces[trace_id] << frame
@@ -41,9 +43,14 @@ class LDBMiddleware
         sleep inteval
       end
 
-      file = "traces-#{rand(10000)}"
 
-      File.open(file, 'w') { |file| file.write(@traces.to_json) }
+      @traces.each do |trace_id, traces|
+        traces = traces.uniq
+        file = "traces-#{rand(10000)}"
+        # analyzer = StackFrames::Analyzer.new(traces)
+        # analyzer.draw("#{trace_id}-demo")
+        File.open(file, 'w') { |file| file.write(traces.to_json) }
+      end
     end
 
     rv = @app.call(env)
@@ -79,4 +86,3 @@ module LdbDemo
     config.middleware.insert_before 0, LDBMiddleware
   end
 end
-
