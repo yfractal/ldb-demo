@@ -15,7 +15,7 @@ class LDBMiddleware
     @stop = false
     @traces = {}
 
-    @buffer = StackFrames::Buffer.new(50)
+    @buffer = StackFrames::Buffer.new(200)
     @thread = Thread.current
 
     @buffer.set_trace_id_and_generation(rand(10000))
@@ -27,13 +27,19 @@ class LDBMiddleware
 
       while !@stop
         frames_count = @buffer.caputre_frames(@thread)
+        time = Time.now
         frame = []
         trace_id = @buffer[0].f_trace_id
         @traces[trace_id] ||= []
 
+        puts "frames_count=#{frames_count}"
         frames_count.times do |i|
           buffer = @buffer[i]
-          frame << [i, buffer.f_method_name, buffer.f_full_label, buffer.f_generation]
+          frame << [i, buffer.f_method_name, buffer.f_full_label, buffer.f_generation, time]
+          if i == frames_count - 1
+            puts "frame = #{frame[i]}"
+          end
+
           # frame << [i, buffer.f_method_name, buffer.f_generation]
           # frame << [i, buffer.f_method_name, buffer.f_full_label, buffer.f_generation]
         end
